@@ -29,11 +29,11 @@ public class WeaponShooting : MonoBehaviour
 	}
 	void FixedUpdate()
 	{
-		Debug.Log ("FixedUpdate");
+
 	}
 	void Update () 
 	{
-		Debug.Log("Update");
+
 		if(Input.GetButtonDown ("Fire1")) 
 		{
 			if(ws.currentClip > 0 && Time.time > nextFire) 
@@ -53,14 +53,23 @@ public class WeaponShooting : MonoBehaviour
 		
 		
 		// -------- Debugging -----------// 
-
-		//cs.aimDir = Quaternion.LookRotation (cs.aimPoint - ws.gunMuzzle.transform.position);
-		//Debug.DrawRay(ws.gunMuzzle.transform.position, cs.aimPoint, new Color(1f, 0.922f, 0.015f, 1000f));
-		//Debug.DrawLine(ws.gunMuzzle.transform.position, cs.aimPoint);
-		//Debug.DrawRay(crosshairRay.origin, crosshairRay.direction, new Color(1f, 0.922f, 0.015f, 1f));
+		Ray crosshairRay = new Ray(ws.gunMuzzle.transform.position, ws.gunMuzzle.transform.forward);
+		cs.aimDir = Quaternion.LookRotation (cs.aimPoint - ws.gunMuzzle.transform.position);
+		Debug.DrawRay(ws.gunMuzzle.transform.position, cs.aimPoint, new Color(1f, 0.0f, 0.0f, 1000f));
+		Debug.DrawLine(ws.gunMuzzle.transform.position, cs.aimPoint);
+		Debug.DrawRay(crosshairRay.origin, crosshairRay.direction, new Color(1f, 0.922f, 0.515f, 1f));
 		
 		//-------------------------------//
-		
+		RaycastHit hit;
+		//Ray ray = Camera.main.ScreenPointToRay (new Vector3(Screen.height/2,Screen.width/2,0));
+		//Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+		//hit2 = new RaycastHit();
+		if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit)) {
+			Debug.Log (hit.transform.tag);
+			Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward, new Color(0f, 1f, 0f, 1f));
+		}
+		//Debug.DrawRay(Camera.main.transform.position, ray.direction, new Color(1f, 0f, 1f, 1f));
+
 	}
 	
 	
@@ -68,12 +77,22 @@ public class WeaponShooting : MonoBehaviour
 		ApplyCrosshair();
 		ShowAmmo();
 	}
-	
+
+
+
 	void Shoot() 
+	{
+		//thebullet.rigidbody.AddForce(cam.transform.forward * bulletImpulse, ForceMode.Impulse);
+
+
+
+	}
+
+	void Shoot2() 
 	{
 	//	audio.PlayOneShot(shotSound);
 		ws.currentClip--;
-	
+		
 		
 		GameObject clone = Instantiate (ws.projectile, ws.gunMuzzle.transform.position, cs.aimDir) as GameObject;
 		
@@ -132,12 +151,10 @@ public class WeaponShooting : MonoBehaviour
 
 	void ApplyCrosshair() 
 	{
-
-		
 		float middleScreenX = Screen.width / 2;
 		float middleScreenY = Screen.height / 2;
 
-		Rect aimPos = new Rect(middleScreenX-20, middleScreenY-offsetY, 20, 20);
+		Rect aimPos = new Rect(middleScreenX-20, middleScreenY-offsetY, 20, 200);
 		GUI.DrawTexture(aimPos, crosshair);	
 	}
 	
@@ -150,7 +167,7 @@ public class WeaponShooting : MonoBehaviour
 //	{
 //		gunAnim.animation.CrossFade("Idle");
 //	}
-	
+
 	IEnumerator ReloadWait(int adj) 
 	{
 		
@@ -159,6 +176,6 @@ public class WeaponShooting : MonoBehaviour
 		
 		ws.currentClip = adj;      // put new bullets in current clip.
 		ws.currentAmmo -= adj;     // subtract the bullets just put in the clip, from the total amount of bullets.
-	}
-	
+	}	
+
 }
